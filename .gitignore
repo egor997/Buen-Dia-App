@@ -24,6 +24,14 @@ venv/
 env/
 ENV/
 env.bak/
+.env
+*.env
+.env.local
+.env.development
+.env.production
+secrets/
+keys/
+content_folder
 venv.bak/
 .vscode/
 .idea/
