@@ -7,7 +7,9 @@ app = FastAPI(title="Buen Dia API")
 # Configure CORS to allow the React frontend to communicate with this backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins (update with specific frontend URL in production)
+    # Allows all origins (update with specific frontend URL in production)
+    allow_origins=["*"],
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -16,6 +18,7 @@ app.add_middleware(
 # Include the modular routers
 app.include_router(habits.router, prefix="/api/habits", tags=["Habits"])
 app.include_router(deepseek.router, prefix="/api/deepseek", tags=["DeepSeek"])
+
 
 @app.get("/")
 def read_root():
