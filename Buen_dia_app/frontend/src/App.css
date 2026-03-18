@@ -77,7 +77,8 @@ body::after {
   margin-bottom: 2rem;
   padding: 0 1rem;
   background: -webkit-linear-gradient(45deg, #c084fc, #38bdf8);
-  -webkit-background-clip: text;
+  -webkit--webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Habits() {
   const habitsList = [
@@ -28,8 +28,30 @@ export default function Habits() {
 
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
 
-  // Example state for tracking checked habits: record "row-col" combinations
   const [checkedCells, setCheckedCells] = useState<Set<string>>(new Set());
+
+  // Load habits from backend on mount
+  useEffect(() => {
+    fetch("http://localhost:8000/api/habits")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success" && data.data) {
+          const loadedChecks = new Set<string>();
+          const savedState = data.data;
+          // data_storage.json formats like: { "0": { "0": true, "1": false }, "1": ...}
+          Object.keys(savedState).forEach((row) => {
+            const rowData = savedState[row];
+            Object.keys(rowData).forEach((col) => {
+              if (rowData[col]) {
+                loadedChecks.add(`${row}-${col}`);
+              }
+            });
+          });
+          setCheckedCells(loadedChecks);
+        }
+      })
+      .catch((err) => console.error("Failed to load habits:", err));
+  }, []);
 
   const toggleCell = (rowIndex: number, colIndex: number) => {
     const cellId = `${rowIndex}-${colIndex}`;
@@ -40,6 +62,23 @@ export default function Habits() {
       newChecked.add(cellId);
     }
     setCheckedCells(newChecked);
+
+    // Build the format expected by save_data.py
+    const toSave: Record<string, Record<string, boolean>> = {};
+    // We need to build the full 22x31 grid map
+    for (let r = 0; r < 22; r++) {
+      toSave[String(r)] = {};
+      for (let c = 0; c < 31; c++) {
+        toSave[String(r)][String(c)] = newChecked.has(`${r}-${c}`);
+      }
+    }
+
+    // Send the updated data to the backend
+    fetch("http://localhost:8000/api/habits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: toSave }),
+    }).catch(err => console.error("Failed to save habit state:", err));
   };
 
   const calculateStreak = (rowIndex: number) => {
