@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import habits, deepseek
+from app.api.endpoints import habits, deepseek, fun_facts, quizlet
 
 app = FastAPI(title="Buen Dia API", description="Backend API for the Buen Dia App")
 
@@ -17,6 +17,8 @@ app.add_middleware(
 # Include the modular routers
 app.include_router(habits.router, prefix="/api/habits", tags=["Habits"])
 app.include_router(deepseek.router, prefix="/api/deepseek", tags=["DeepSeek"])
+app.include_router(fun_facts.router, prefix="/api/fun_facts", tags=["FunFacts"])
+app.include_router(quizlet.router, prefix="/api/quizlet", tags=["Quizlet"])
 
 @app.get("/")
 def read_root():

@@ -2,35 +2,17 @@ import { useState, useEffect } from "react";
 
 export default function Habits() {
   const habitsList = [
-    "Get up after the first alarm",
-    "Warm up in the morning",
-    "Brush teeth in the morning",
-    "Take pills",
-    "Grammar video",
-    "Read 15 pages",
-    "Do anything what can bring money in future for 1 hour",
-    "Coding (Github portfolio) 1.5 H min",
-    "Do one thing you would never do",
-    "Push ups x3",
-    "Pull ups x3",
-    "Only ZDFHeute by eating",
-    "Facial yoga",
-    "Eye exercises",
-    "Neck stretches",
-    "Posture exercises",
-    "Remind yourself you did a great job",
-    "Brush teeth in the evening",
-    "Don't eat more than one sweet thing",
-    "Smile",
-    "Go to bed at 23",
-    "Holydays not only at home"
+    "Get up after the first alarm", "Warm up in the morning", "Brush teeth in the morning", "Take pills", 
+    "Grammar video", "Read 15 pages", "Do anything what can bring money in future for 1 hour", 
+    "Coding (Github portfolio) 1.5 H min", "Do one thing you would never do", "Push ups x3", "Pull ups x3", 
+    "Only ZDFHeute by eating", "Facial yoga", "Eye exercises", "Neck stretches", "Posture exercises", 
+    "Remind yourself you did a great job", "Brush teeth in the evening", "Don't eat more than one sweet thing", 
+    "Smile", "Go to bed at 23", "Holydays not only at home"
   ];
 
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
-
   const [checkedCells, setCheckedCells] = useState<Set<string>>(new Set());
 
-  // Load habits from backend on mount
   useEffect(() => {
     fetch("http://localhost:8000/api/habits")
       .then((res) => res.json())
@@ -38,13 +20,10 @@ export default function Habits() {
         if (data.status === "success" && data.data) {
           const loadedChecks = new Set<string>();
           const savedState = data.data;
-          // data_storage.json formats like: { "0": { "0": true, "1": false }, "1": ...}
           Object.keys(savedState).forEach((row) => {
             const rowData = savedState[row];
             Object.keys(rowData).forEach((col) => {
-              if (rowData[col]) {
-                loadedChecks.add(`${row}-${col}`);
-              }
+              if (rowData[col]) loadedChecks.add(`${row}-${col}`);
             });
           });
           setCheckedCells(loadedChecks);
@@ -63,9 +42,7 @@ export default function Habits() {
     }
     setCheckedCells(newChecked);
 
-    // Build the format expected by save_data.py
     const toSave: Record<string, Record<string, boolean>> = {};
-    // We need to build the full 22x31 grid map
     for (let r = 0; r < 22; r++) {
       toSave[String(r)] = {};
       for (let c = 0; c < 31; c++) {
@@ -73,7 +50,6 @@ export default function Habits() {
       }
     }
 
-    // Send the updated data to the backend
     fetch("http://localhost:8000/api/habits", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -82,63 +58,87 @@ export default function Habits() {
   };
 
   const calculateStreak = (rowIndex: number) => {
-    const todayDay = new Date().getDate(); // 1-indexed day of month
     let streak = 0;
-    // Count forward from day 1 up to today, reset streak on gaps
-    for (let col = 0; col < todayDay; col++) {
-      if (checkedCells.has(`${rowIndex}-${col}`)) {
+    let foundFirst = false;
+    for (let currentDay = 30; currentDay >= 0; currentDay--) {
+      if (checkedCells.has(`${rowIndex}-${currentDay}`)) {
+        foundFirst = true;
         streak++;
-      } else {
-        streak = 0; // reset on unchecked day
+      } else if (foundFirst) {
+        break;
       }
     }
     return streak;
   };
 
   return (
-    <div className="page-container">
-      <h1>Habits Tracker</h1>
+    <div className="page-container" style={{ padding: '0', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '2.5rem 3rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>
+        <h1 style={{ marginBottom: '0.5rem' }}>Habits Tracker</h1>
+        <p>Your daily discipline dashboard. Stay consistent to build your streak.</p>
+      </div>
       
-      <div className="glass-table-container">
-        <table className="glass-table">
-          <thead>
+      <div style={{ flex: 1, overflow: 'auto', padding: '0' }}>
+        <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.95rem' }}>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(7, 9, 19, 0.95)', backdropFilter: 'blur(10px)' }}>
             <tr>
-              <th style={{ minWidth: '300px', position: 'sticky', left: 0, backgroundColor: 'rgba(30, 27, 75, 0.95)', zIndex: 10 }}>Habit</th>
+              <th style={{ padding: '1.2rem 2rem', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, background: 'inherit', zIndex: 21, minWidth: '320px', borderBottom: '1px solid var(--glass-border-strong)'}}>
+                Habit
+              </th>
               {days.map((day) => (
-                <th key={day} style={{ textAlign: 'center', minWidth: '40px' }}>{day}</th>
+                <th key={day} style={{ textAlign: 'center', padding: '1.2rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, minWidth: '45px', borderBottom: '1px solid var(--glass-border-strong)' }}>
+                  {day}
+                </th>
               ))}
-              <th style={{ textAlign: 'center', minWidth: '80px', position: 'sticky', right: 0, backgroundColor: 'rgba(30, 27, 75, 0.95)', zIndex: 10 }}>Streak</th>
+              <th style={{ textAlign: 'center', padding: '1.2rem 1.5rem', fontWeight: 600, color: '#f59e0b', position: 'sticky', right: 0, background: 'inherit', zIndex: 21, borderBottom: '1px solid var(--glass-border-strong)'}}>
+                Streak
+              </th>
             </tr>
           </thead>
           <tbody>
-            {habitsList.map((habit, rowIndex) => (
-              <tr key={rowIndex}>
-                <td style={{ position: 'sticky', left: 0, backgroundColor: 'rgba(30, 27, 75, 0.95)', zIndex: 5, fontWeight: 500 }}>
-                  {habit}
-                </td>
-                {days.map((_, colIndex) => (
-                  <td key={colIndex} style={{ textAlign: 'center' }}>
-                    <div 
-                      onClick={() => toggleCell(rowIndex, colIndex)}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        margin: '0 auto',
-                        borderRadius: '6px',
-                        border: '1px solid var(--glass-border)',
-                        backgroundColor: checkedCells.has(`${rowIndex}-${colIndex}`) ? 'var(--success)' : 'rgba(0,0,0,0.2)',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: checkedCells.has(`${rowIndex}-${colIndex}`) ? '0 0 10px var(--success)' : 'none'
-                      }}
-                    />
+            {habitsList.map((habit, rowIndex) => {
+              const streak = calculateStreak(rowIndex);
+              return (
+                <tr key={rowIndex} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }} className="habit-row">
+                  <td style={{ padding: '1.2rem 2rem', color: 'var(--text-main)', fontWeight: 500, position: 'sticky', left: 0, background: 'var(--bg-dark)', zIndex: 10 }}>
+                    {habit}
                   </td>
-                ))}
-                <td style={{ textAlign: 'center', fontWeight: 'bold', color: 'var(--primary)', position: 'sticky', right: 0, backgroundColor: 'rgba(30, 27, 75, 0.95)', zIndex: 5 }}>
-                  {calculateStreak(rowIndex)} 🔥
-                </td>
-              </tr>
-            ))}
+                  {days.map((_, colIndex) => {
+                    const isChecked = checkedCells.has(`${rowIndex}-${colIndex}`);
+                    return (
+                      <td key={colIndex} style={{ textAlign: 'center', padding: '0.5rem' }}>
+                        <div 
+                          onClick={() => toggleCell(rowIndex, colIndex)}
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            margin: '0 auto',
+                            borderRadius: '8px',
+                            background: isChecked ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                            border: `1px solid ${isChecked ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
+                            cursor: 'pointer',
+                            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                            transform: isChecked ? 'scale(1.1)' : 'scale(1)',
+                            boxShadow: isChecked ? 'var(--shadow-glow)' : 'inset 0 2px 4px rgba(0,0,0,0.2)'
+                          }}
+                        />
+                      </td>
+                    );
+                  })}
+                  <td style={{ textAlign: 'center', padding: '1.2rem 1.5rem', fontWeight: 700, position: 'sticky', right: 0, background: 'var(--bg-dark)', zIndex: 10 }}>
+                    <span style={{ 
+                      display: 'inline-block',
+                      padding: '0.3rem 0.8rem', 
+                      borderRadius: '20px', 
+                      background: streak > 0 ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
+                      color: streak > 0 ? '#fbbf24' : 'var(--text-muted)'
+                    }}>
+                      {streak > 0 ? `${streak} 🔥` : '-'}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
