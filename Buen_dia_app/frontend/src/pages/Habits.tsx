@@ -82,12 +82,14 @@ export default function Habits() {
   };
 
   const calculateStreak = (rowIndex: number) => {
+    const todayDay = new Date().getDate(); // 1-indexed day of month
     let streak = 0;
-    for (let currentDay = 30; currentDay >= 0; currentDay--) {
-      if (checkedCells.has(`${rowIndex}-${currentDay}`)) {
+    // Count forward from day 1 up to today, reset streak on gaps
+    for (let col = 0; col < todayDay; col++) {
+      if (checkedCells.has(`${rowIndex}-${col}`)) {
         streak++;
       } else {
-        break; // stop when we hit an unchecked day
+        streak = 0; // reset on unchecked day
       }
     }
     return streak;
@@ -105,7 +107,7 @@ export default function Habits() {
               {days.map((day) => (
                 <th key={day} style={{ textAlign: 'center', minWidth: '40px' }}>{day}</th>
               ))}
-              <th style={{ textAlign: 'center', minWidth: '80px' }}>Streak</th>
+              <th style={{ textAlign: 'center', minWidth: '80px', position: 'sticky', right: 0, backgroundColor: 'rgba(30, 27, 75, 0.95)', zIndex: 10 }}>Streak</th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +134,7 @@ export default function Habits() {
                     />
                   </td>
                 ))}
-                <td style={{ textAlign: 'center', fontWeight: 'bold', color: 'var(--primary)' }}>
+                <td style={{ textAlign: 'center', fontWeight: 'bold', color: 'var(--primary)', position: 'sticky', right: 0, backgroundColor: 'rgba(30, 27, 75, 0.95)', zIndex: 5 }}>
                   {calculateStreak(rowIndex)} 🔥
                 </td>
               </tr>
