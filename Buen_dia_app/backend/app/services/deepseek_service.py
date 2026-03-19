@@ -1,38 +1,25 @@
-import sys
 import os
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import HTTPException
+from app.schemas.deepseek import DeepSeekRequest
 
-# Ensure we can import from app_logic
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app_logic'))
-
-router = APIRouter()
-
-class DeepSeekRequest(BaseModel):
-    model: str = "deepseek-chat"
-    system_prompt: str = "You are a helpful coding assistant"
-    user_prompt: str
-    temperature: float = 1.0
-    stream: bool = False
-
-@router.post("/")
-def query_deepseek(request: DeepSeekRequest):
+def query_deepseek_api(request: DeepSeekRequest) -> str:
     """
-    Utilizes the logic from deepseek_api.py to fetch a response.
+    Business logic to communicate with DeepSeek API.
     """
-    # Import inside the function to avoid breaking if the user hasn't set their key yet
     try:
         from openai import OpenAI
         from dotenv import load_dotenv
     except ImportError:
         raise HTTPException(status_code=500, detail="Missing OpenAI or python-dotenv libraries. Please install them.")
-        
-    env_path = os.path.join(os.path.dirname(__file__), '..', 'app_logic', '.env')
+
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    env_path = os.path.join(base_dir, 'data', '.env')
+    
     load_dotenv(dotenv_path=env_path)
 
     api_key = os.environ.get('DEEPSEEK_API_KEY')
     if not api_key:
-        raise HTTPException(status_code=500, detail="DEEPSEEK_API_KEY not found in backend/app_logic/.env")
+        raise HTTPException(status_code=500, detail="DEEPSEEK_API_KEY not found in backend/data/.env")
 
     client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
 
@@ -47,6 +34,6 @@ def query_deepseek(request: DeepSeekRequest):
             stream=request.stream
         )
         answer = response.choices[0].message.content
-        return {"status": "success", "response": answer}
+        return answer
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
