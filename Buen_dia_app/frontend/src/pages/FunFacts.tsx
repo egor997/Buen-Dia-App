@@ -81,7 +81,7 @@ export default function FunFacts() {
         {/* German (Base) Frame */}
         <div className="glass-panel" style={{
           display: 'flex', flexDirection: 'column', padding: '2rem',
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(124, 58, 237, 0.05))',
+          background: 'rgba(239, 68, 68, 0.05)',
           border: '1px solid var(--glass-border-strong)'
         }}>
           <h3 style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '2px' }}>🇩🇪 German</h3>
@@ -94,7 +94,7 @@ export default function FunFacts() {
         {(factData?.english) && (
           <div className="glass-panel" style={{
             display: 'flex', flexDirection: 'column', padding: '2rem',
-            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(59, 130, 246, 0.05))',
+            background: 'rgba(59, 130, 246, 0.05)',
             border: '1px solid var(--glass-border-strong)'
           }}>
             <h3 style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '2px' }}>🇬🇧 English</h3>
@@ -108,7 +108,7 @@ export default function FunFacts() {
         {(factData?.spanish) && (
           <div className="glass-panel" style={{
             display: 'flex', flexDirection: 'column', padding: '2rem',
-            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(245, 158, 11, 0.05))',
+            background: 'rgba(245, 158, 11, 0.05)',
             border: '1px solid var(--glass-border-strong)'
           }}>
             <h3 style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '2px' }}>🇪🇸 Spanish</h3>
@@ -124,7 +124,7 @@ export default function FunFacts() {
           {loading ? "Loading..." : "Next Fact ✨"}
         </button>
         <button className="btn" onClick={addRandomFactExample} style={{ padding: '1rem 2rem' }}>Add New Fact</button>
-        <button className="btn" onClick={removeCurrentFact} style={{ padding: '1rem 2rem', color: 'var(--danger)', borderColor: 'rgba(239, 68, 68, 0.3)' }}>Remove Current</button>
+        <button className="btn" onClick={removeCurrentFact} style={{ padding: '1rem 2rem', color: 'var(--text-main)', borderColor: 'var(--glass-border-strong)' }}>Remove Current</button>
       </div>
     </div>
   );

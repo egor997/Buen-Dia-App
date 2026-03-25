@@ -6,7 +6,7 @@ export default function DeepSeek() {
   const [role, setRole] = useState("user");
   const [temperature, setTemperature] = useState("1.0");
   const [tokens, setTokens] = useState("");
-  
+
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -55,20 +55,20 @@ export default function DeepSeek() {
       </div>
 
       <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
-        
+
         {/* Main Interface */}
         <div style={{ flex: '2 1 500px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          
-          <div className="glass-panel" style={{ padding: '2rem', background: 'rgba(0,0,0,0.2)' }}>
-            <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--secondary)' }}>Input Console</h2>
-            <textarea 
-              className="input-field" 
-              placeholder="Enter your prompt or system instruction here..." 
+
+          <div className="glass-panel" style={{ padding: '2rem', background: 'rgba(255,255,255,0.4)' }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--text-main)' }}>Input Console</h2>
+            <textarea
+              className="input-field"
+              placeholder="Enter your prompt or system instruction here..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               style={{ height: '180px', resize: 'vertical', fontSize: '1rem', lineHeight: 1.5 }}
             ></textarea>
-            
+
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Model Architecture</label>
@@ -96,13 +96,13 @@ export default function DeepSeek() {
           </div>
 
           {/* Response Box */}
-          <div className="glass-panel" style={{ 
-            minHeight: '200px', 
+          <div className="glass-panel" style={{
+            minHeight: '200px',
             border: response ? '1px solid var(--primary)' : '1px dashed var(--glass-border-strong)',
-            background: response ? 'rgba(124, 58, 237, 0.05)' : 'transparent',
+            background: response ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
             transition: 'all 0.4s'
           }}>
-            <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--primary)' }}>Output Stream</h2>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--text-main)' }}>Output Stream</h2>
             {response ? (
               <p style={{ color: 'var(--text-main)', whiteSpace: 'pre-wrap' }}>{response}</p>
             ) : (
@@ -118,44 +118,44 @@ export default function DeepSeek() {
         <div style={{ flex: '1 1 300px' }}>
           <div className="glass-panel" style={{ position: 'sticky', top: '2rem' }}>
             <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--text-main)' }}>Hyperparameters</h2>
-            
+
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                 <span>Temperature</span>
-                <span style={{ color: 'var(--primary)' }}>{temperature}</span>
+                <span style={{ color: 'var(--text-main)' }}>{temperature}</span>
               </label>
-              <input 
-                type="range" 
-                min="0" max="2" step="0.1" 
-                value={temperature} 
-                onChange={(e) => setTemperature(e.target.value)} 
-                style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }} 
+              <input
+                type="range"
+                min="0" max="2" step="0.1"
+                value={temperature}
+                onChange={(e) => setTemperature(e.target.value)}
+                style={{ width: '100%', accentColor: 'var(--text-main)', cursor: 'pointer' }}
               />
               <p style={{ fontSize: '0.8rem', marginTop: '0.4rem', opacity: 0.7 }}>0.0 = Math/Logic | 1.0 = Standard | 1.5 = Creative</p>
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Max Tokens Limit</label>
-              <input 
-                type="number" 
-                className="input-field" 
-                placeholder="Default: 500" 
-                value={tokens} 
-                onChange={(e) => setTokens(e.target.value)} 
+              <input
+                type="number"
+                className="input-field"
+                placeholder="Default: 500"
+                value={tokens}
+                onChange={(e) => setTokens(e.target.value)}
               />
               <p style={{ fontSize: '0.8rem', marginTop: '0.4rem', opacity: 0.7 }}>100 tokens ≈ 75 words.</p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>System Constraints</label>
-              <input 
-                type="text" 
-                className="input-field" 
-                placeholder="Vocabulary overrides..." 
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Vocabulary overrides..."
               />
             </div>
           </div>
-          
+
           {/* Quick Learning Links Box */}
           <div className="glass-panel" style={{ marginTop: '2rem' }}>
             <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--text-main)' }}>Language Flashcards</h2>
@@ -165,14 +165,14 @@ export default function DeepSeek() {
                   <span>🇩🇪 German</span> <span>→</span>
                 </button>
               </a>
-              <a href="https://quizlet.com/865986006/edit" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                <button className="btn" style={{ width: '100%', textAlign: 'left', display: 'flex', justifyContent: 'space-between' }}>
-                  <span>🇪🇸 Spanish</span> <span>→</span>
-                </button>
-              </a>
               <a href="https://quizlet.com/870391525/edit" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                 <button className="btn" style={{ width: '100%', textAlign: 'left', display: 'flex', justifyContent: 'space-between' }}>
                   <span>🇬🇧 English</span> <span>→</span>
+                </button>
+              </a>
+              <a href="https://quizlet.com/865986006/edit" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <button className="btn" style={{ width: '100%', textAlign: 'left', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>🇪🇸 Spanish</span> <span>→</span>
                 </button>
               </a>
             </div>

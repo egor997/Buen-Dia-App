@@ -58,14 +58,16 @@ export default function Habits() {
   };
 
   const calculateStreak = (rowIndex: number) => {
+    const todayIndex = new Date().getDate() - 1;
     let streak = 0;
-    let foundFirst = false;
-    for (let currentDay = 30; currentDay >= 0; currentDay--) {
+    for (let currentDay = todayIndex; currentDay >= 0; currentDay--) {
       if (checkedCells.has(`${rowIndex}-${currentDay}`)) {
-        foundFirst = true;
         streak++;
-      } else if (foundFirst) {
-        break;
+      } else {
+        if (currentDay === todayIndex) {
+          continue; // Allow today to be unchecked without breaking the streak
+        }
+        break; // Streak broken
       }
     }
     return streak;
@@ -80,7 +82,7 @@ export default function Habits() {
       
       <div style={{ flex: 1, overflow: 'auto', padding: '0' }}>
         <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.95rem' }}>
-          <thead style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(7, 9, 19, 0.95)', backdropFilter: 'blur(10px)' }}>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(10px)' }}>
             <tr>
               <th style={{ padding: '1.2rem 2rem', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, background: 'inherit', zIndex: 21, minWidth: '320px', borderBottom: '1px solid var(--glass-border-strong)'}}>
                 Habit
@@ -90,7 +92,7 @@ export default function Habits() {
                   {day}
                 </th>
               ))}
-              <th style={{ textAlign: 'center', padding: '1.2rem 1.5rem', fontWeight: 600, color: '#f59e0b', position: 'sticky', right: 0, background: 'inherit', zIndex: 21, borderBottom: '1px solid var(--glass-border-strong)'}}>
+              <th style={{ textAlign: 'center', padding: '1.2rem 1.5rem', fontWeight: 600, color: 'var(--text-main)', position: 'sticky', right: 0, background: 'inherit', zIndex: 21, borderBottom: '1px solid var(--glass-border-strong)'}}>
                 Streak
               </th>
             </tr>
@@ -99,23 +101,27 @@ export default function Habits() {
             {habitsList.map((habit, rowIndex) => {
               const streak = calculateStreak(rowIndex);
               return (
-                <tr key={rowIndex} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }} className="habit-row">
+                <tr key={rowIndex} style={{ borderBottom: '1px solid rgba(0,0,0,0.05)', transition: 'background 0.2s' }} className="habit-row">
                   <td style={{ padding: '1.2rem 2rem', color: 'var(--text-main)', fontWeight: 500, position: 'sticky', left: 0, background: 'var(--bg-dark)', zIndex: 10 }}>
                     {habit}
                   </td>
                   {days.map((_, colIndex) => {
                     const isChecked = checkedCells.has(`${rowIndex}-${colIndex}`);
+                    const cellDate = new Date();
+                    cellDate.setDate(colIndex + 1);
+                    const formattedDate = cellDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
                     return (
                       <td key={colIndex} style={{ textAlign: 'center', padding: '0.5rem' }}>
                         <div 
+                          title={`${formattedDate} - ${habit}`}
                           onClick={() => toggleCell(rowIndex, colIndex)}
                           style={{
                             width: '28px',
                             height: '28px',
                             margin: '0 auto',
                             borderRadius: '8px',
-                            background: isChecked ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                            border: `1px solid ${isChecked ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
+                            background: isChecked ? 'var(--primary)' : 'rgba(0,0,0,0.03)',
+                            border: `1px solid ${isChecked ? 'var(--primary)' : 'rgba(0,0,0,0.1)'}`,
                             cursor: 'pointer',
                             transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                             transform: isChecked ? 'scale(1.1)' : 'scale(1)',
@@ -130,8 +136,8 @@ export default function Habits() {
                       display: 'inline-block',
                       padding: '0.3rem 0.8rem', 
                       borderRadius: '20px', 
-                      background: streak > 0 ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-                      color: streak > 0 ? '#fbbf24' : 'var(--text-muted)'
+                      background: streak > 0 ? 'rgba(249, 115, 22, 0.1)' : 'transparent',
+                      color: streak > 0 ? 'var(--secondary)' : 'var(--text-muted)'
                     }}>
                       {streak > 0 ? `${streak} 🔥` : '-'}
                     </span>

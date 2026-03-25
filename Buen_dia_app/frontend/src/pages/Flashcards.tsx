@@ -109,7 +109,7 @@ export default function Flashcards() {
               alignItems: 'center', 
               justifyContent: 'center',
               cursor: 'pointer',
-              background: showMeaning ? 'rgba(6, 182, 212, 0.1)' : 'rgba(124, 58, 237, 0.1)',
+              background: showMeaning ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255, 255, 255, 0.6)',
               border: '1px solid var(--glass-border-strong)',
               transition: 'background 0.3s ease',
               textAlign: 'center',
